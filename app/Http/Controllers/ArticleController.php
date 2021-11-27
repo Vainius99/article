@@ -129,6 +129,20 @@ class ArticleController extends Controller
         //
     }
 
+    public function editAjax(Article $article) {
+        $success = [
+            'success' => 'Article recieved successfully',
+            'article_id' => $article->id,
+            'article_title' => $article->title,
+            'article_description' => $article->description,
+            'article_type_id' => $article->type_id
+        ];
+
+        $success_json = response()->json($success);
+
+        return $success_json;
+    }
+
     /**
      * Update the specified resource in storage.
      *
@@ -139,6 +153,49 @@ class ArticleController extends Controller
     public function update(UpdateArticleRequest $request, Article $article)
     {
         //
+    }
+
+    public function updateAjax(Request $request, Article $article) {
+        $input = [
+            'article_title' => $request->article_title,
+            'article_description' => $request->article_description,
+            'article_type_id' => $request->article_type_id
+        ];
+        $rules = [
+            'article_title' => 'required|min:3',
+            'article_description' => 'min:15',
+            'article_type_id' => 'numeric'
+        ]; //taisykles
+
+        $validator = Validator::make($input, $rules);
+
+        if($validator->passes()) {
+            $article->title = $request->article_title;
+            $article->description = $request->article_description;
+            $article->type_id = $request->article_type_id;
+
+            $article->save();
+
+            $success = [
+                'success' => 'Article update successfully',
+                'article_id' => $article->id,
+                'article_title' => $article->title,
+                'article_description' => $article->description,
+                'article_type_id' => $article->articleType->title
+            ];
+
+            $success_json = response()->json($success);
+
+            return $success_json;
+        }
+
+        $errors = [
+            'error' => $validator->messages()->get('*')
+        ];
+
+        $errors_json = response()->json($errors);
+
+        return $errors_json;
     }
 
     /**

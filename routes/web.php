@@ -24,11 +24,13 @@ Route::prefix('articles')->group(function () {
     Route::get('create', 'App\Http\Controllers\ArticleController@create')->name('article.create')->middleware("auth");
     Route::post('store', 'App\Http\Controllers\ArticleController@store')->name('article.store')->middleware("auth");
     Route::get('edit/{article}', 'App\Http\Controllers\ArticleController@edit')->name('article.edit')->middleware("auth");
+    Route::get('editAjax/{article}', 'App\Http\Controllers\ArticleController@editAjax')->name('article.editAjax')->middleware("auth");
     Route::post('update/{article}', 'App\Http\Controllers\ArticleController@update')->name('article.update')->middleware("auth");
     Route::post('delete/{article}', 'App\Http\Controllers\ArticleController@destroy')->name('article.destroy')->middleware("auth");
     Route::get('show/{article}', 'App\Http\Controllers\ArticleController@show')->name('article.show')->middleware("auth");
-    Route::post('storeAjax', 'App\Http\Controllers\ArticleController@storeAjax')->name('article.storeAjax');
-    Route::get('showAjax/{article}', 'App\Http\Controllers\ArticleController@showAjax')->name('article.showAjax');
+    Route::post('storeAjax', 'App\Http\Controllers\ArticleController@storeAjax')->name('article.storeAjax')->middleware("auth");
+    Route::get('showAjax/{article}', 'App\Http\Controllers\ArticleController@showAjax')->name('article.showAjax')->middleware("auth");
+    Route::post('updateAjax/{article}', 'App\Http\Controllers\ArticleController@updateAjax')->name('article.updateAjax')->middleware("auth");
 });
 
 Route::prefix('types')->group(function () {
