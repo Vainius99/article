@@ -208,4 +208,36 @@ class ArticleController extends Controller
     {
         //
     }
+
+    public function destroySelected(Request $request) {
+
+        $checkedArticles = $request->checkedArticles;
+
+        $messages = array();
+
+        $errorsuccess = array();
+
+        foreach($checkedArticles as $article_id) {
+
+            $article = Article::find($article_id);
+                $deleteAction = $article->delete();
+                if($deleteAction) {
+                    $errorsuccess[] = 'success';
+                    $messages[] = "Article ".$article_id." deleted successfully";
+                } else {
+                    $messages[] = "Something went wrong";
+                    $errorsuccess[] = 'danger';
+                }
+        }
+        $success = [
+            'success' => $checkedArticles,
+            'messages' => $messages,
+            'errorsuccess' => $errorsuccess
+        ];
+
+        $success_json = response()->json($success);
+
+        return $success_json;
+
+    }
 }

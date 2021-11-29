@@ -27,6 +27,7 @@ Route::prefix('articles')->group(function () {
     Route::get('editAjax/{article}', 'App\Http\Controllers\ArticleController@editAjax')->name('article.editAjax')->middleware("auth");
     Route::post('update/{article}', 'App\Http\Controllers\ArticleController@update')->name('article.update')->middleware("auth");
     Route::post('delete/{article}', 'App\Http\Controllers\ArticleController@destroy')->name('article.destroy')->middleware("auth");
+    Route::post('destroySelected', 'App\Http\Controllers\ArticleController@destroySelected')->name('article.destroySelected')->middleware("auth");
     Route::get('show/{article}', 'App\Http\Controllers\ArticleController@show')->name('article.show')->middleware("auth");
     Route::post('storeAjax', 'App\Http\Controllers\ArticleController@storeAjax')->name('article.storeAjax')->middleware("auth");
     Route::get('showAjax/{article}', 'App\Http\Controllers\ArticleController@showAjax')->name('article.showAjax')->middleware("auth");
@@ -43,6 +44,8 @@ Route::prefix('types')->group(function () {
     Route::post('delete/{type}', 'App\Http\Controllers\TypeController@destroy')->name('type.destroy')->middleware("auth");
     Route::post('deleteAjax/{type}', 'App\Http\Controllers\TypeController@destroyAjax' )->name('type.destroyAjax');
     Route::get('show/{type}', 'App\Http\Controllers\TypeController@show')->name('type.show')->middleware("auth");
+    Route::post('storeAjax', 'App\Http\Controllers\TypeController@storeAjax')->name('type.storeAjax')->middleware("auth");
+    Route::post('destroySelected', 'App\Http\Controllers\TypeController@destroySelected')->name('type.destroySelected')->middleware("auth");
 });
 
 Auth::routes();

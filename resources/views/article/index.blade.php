@@ -4,11 +4,14 @@
 
 <div class="container">
 
+    <div class="alerts d-none"></div>
+
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createArticleModal">
         Create New Client Modal
     </button>
+    {{-- <button class="btn btn-danger" id="delete-selected">Delete Selected</button> --}}
 
-    <table class="table table-bordered table-hover gray">
+    <table class="table table-bordered table-hover gray articles">
         <thead class="thead-dark">
         <tr>
             <th> ID </th>
@@ -20,7 +23,7 @@
         </thead>
 
         @foreach ($articles as $article)
-        <tr>
+        <tr class="article">
             <td>{{ $article->id }}</td>
             <td>{{ $article->title }}</td>
             <td>{!! $article->description !!}</td>
@@ -30,11 +33,12 @@
             <td>
                 <button type="button" class="btn btn-dark show-article" data-article_id='{{$article->id}}'>Show</button>
                 <button type="button" class="btn btn-warning update-article" data-article_id='{{$article->id}}'>Update</button>
+                <input class="delete-article" type="checkbox"  name="articleDelete[]" value="{{$article->id}}" />
             </td>
         </tr>
         @endforeach
     </table>
-
+    <button class="btn btn-danger" id="delete-selected">Delete Selected</button>
 </div>
 
 <div class="modal fade" id="createArticleModal" tabindex="-1" role="dialog" aria-labelledby="createArticleModal" aria-hidden="true">
@@ -174,7 +178,7 @@
                     if($.isEmptyObject(data.error)) {
                         $(".invalid-feedback").css("display", 'none');
                         $("#createArticleModal").modal("hide");
-                        $(".articles").append("<tr><td>"+ data.article_id +"</td><td>"+ data.article_title +"</td><td>"+ data.article_description +"</td><td>"+ data.article_type_id +"</td><td>Actions</td></tr>");
+                        $(".articles").append("<tr><td>"+ data.article_id +"</td><td>"+ data.article_title +"</td><td>"+ data.article_description +"</td><td>"+ data.article_type_id +"</td><td><button type='button' class='btn btn-dark show-article' data-article_id='"+data.article_id+"'>Show</button><button type='button' class='btn btn-warning update-article' data-article_id='"+data.article_id+"'>Update</button></td></tr>");
                         $(".alerts").append("<div class='alert alert-success'>"+ data.success +"</div>");
                         $("#article_title").val('');
                         $("#article_description").val('');
@@ -249,6 +253,34 @@
                     }
                 }
             });
+    })
+    $("#delete-selected").click(function() {
+        var checkedArticles = [];
+        $.each( $(".delete-article:checked"), function( key, article) {
+            checkedArticles[key] = article.value;
+        });
+        console.log(checkedArticles);
+            $.ajax({
+                type: 'POST',
+                url: '{{route("article.destroySelected")}}',
+                data: { checkedArticles: checkedArticles },
+                success: function(data) {
+                        $(".alerts").toggleClass("d-none");
+                        for(var i=0; i<data.messages.length; i++) {
+                            $(".alerts").append("<div class='alert alert-"+data.errorsuccess[i] + "'><p>"+ data.messages[i] + "</p></div>")
+                            var id = data.success[i];
+                            if(data.errorsuccess[i] == "success") {
+                                $(".article"+id ).remove();
+                            }
+                        }
+
+                    }
+                });
+            })
+
+        $(".delete-article").click(function(){
+            var article_id = $(this).val();
+
     })
  });
 
