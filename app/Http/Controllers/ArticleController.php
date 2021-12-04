@@ -156,6 +156,7 @@ class ArticleController extends Controller
     }
 
     public function updateAjax(Request $request, Article $article) {
+
         $input = [
             'article_title' => $request->article_title,
             'article_description' => $request->article_description,
@@ -165,7 +166,7 @@ class ArticleController extends Controller
             'article_title' => 'required|min:3',
             'article_description' => 'min:15',
             'article_type_id' => 'numeric'
-        ]; //taisykles
+        ];
 
         $validator = Validator::make($input, $rules);
 
@@ -240,4 +241,106 @@ class ArticleController extends Controller
         return $success_json;
 
     }
+
+
+        public function searchAjax(Request $request) {
+
+        $searchValue = $request->searchField;
+
+        $articles = Article::query()
+        ->where('title', 'like', "%{$searchValue}%")
+        ->orWhere('description', 'like', "%{$searchValue}%")
+        ->get();
+
+        foreach ($articles as $article) {
+            $article['articleType'] = $article->articleType->title;
+        }
+
+        if($searchValue == '' || count($articles)!= 0) {
+            $success = [
+                'success' => 'Found '.count($articles),
+                'articles' => $articles
+            ];
+
+            $success_json = response()->json($success);
+
+            return $success_json;
+        }
+
+        $error = [
+            'error' => 'No results are found'
+        ];
+
+        $errors_json = response()->json($error);
+
+        return $errors_json;
+
+    }
+
+    public function indexAjax(Request $request) {
+
+        $sortCol = $request->sortCol;
+        $sortOrder = $request->sortOrder;
+        $type_id = $request->type_id;
+
+        if($type_id == 'all') {
+            $articles = Article::orderBy($sortCol, $sortOrder)->get();
+        } else {
+            $articles = Article::where('type_id', $type_id)->orderBy($sortCol, $sortOrder)->get();
+        }
+
+        foreach ($articles as $article) {
+            $article['type_title'] = $article->articleType->title;
+        }
+        $articles_count = count($articles);
+
+        if ($articles_count == 0) {
+            $error = [
+                'error' => 'There are no articles',
+            ];
+            $error_json = response()->json($error);
+            return $error_json;
+        }
+        $success = [
+            'success' => 'articles sorted successfuly',
+            'articles' => $articles
+        ];
+        $success_json = response()->json($success);
+
+        return $success_json;
+
+    }
+
+    // public function filterAjax(Request $request) {
+
+    //     $type_id = $request->type_id;
+
+    //     if($type_id == 'all') {
+    //         $articles = Article::all();
+    //     } else {
+    //         $articles = Article::all()->where('type_id', $type_id);
+    //     }
+
+    //     foreach ($articles as $article) {
+    //         $article['type_title'] = $article->articleType->title;
+    //     }
+
+    //     $articles_count = count($articles);
+
+    //     if ($articles_count == 0) {
+    //         $error = [
+    //             'error' => 'There are no articles',
+    //         ];
+
+    //         $error_json = response()->json($error);
+    //         return $error_json;
+    //     }
+
+    //     $success = [
+    //         'success' => 'articles filtered successfuly',
+    //         'articles' => $articles
+    //     ];
+    //     $success_json = response()->json($success);
+    //     return $success_json;
+    // }
 }

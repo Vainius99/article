@@ -32,6 +32,9 @@ Route::prefix('articles')->group(function () {
     Route::post('storeAjax', 'App\Http\Controllers\ArticleController@storeAjax')->name('article.storeAjax')->middleware("auth");
     Route::get('showAjax/{article}', 'App\Http\Controllers\ArticleController@showAjax')->name('article.showAjax')->middleware("auth");
     Route::post('updateAjax/{article}', 'App\Http\Controllers\ArticleController@updateAjax')->name('article.updateAjax')->middleware("auth");
+    Route::get('searchAjax', 'App\Http\Controllers\ArticleController@searchAjax') ->name('article.searchAjax')->middleware("auth");
+    Route::get('indexAjax', 'App\Http\Controllers\ArticleController@indexAjax') ->name('article.indexAjax')->middleware("auth");
+    Route::get('filterAjax', 'App\Http\Controllers\ArticleController@filterAjax') ->name('article.filterAjax')->middleware("auth");
 });
 
 Route::prefix('types')->group(function () {
