@@ -42,7 +42,7 @@
     </div>
 
     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createArticleModal">
-        Create New Client Modal
+        Create New Artical Modal
     </button>
     {{-- <button class="btn btn-danger" id="delete-selected">Delete Selected</button> --}}
 
@@ -213,12 +213,44 @@
                 articleRow += "<td>";
                 articleRow += '<button type="button" class="btn btn-dark show-article" data-article_id="'+ article.id +'">Show</button>';
                 articleRow += '<button type="button" class="btn btn-warning update-article" data-article_id="'+ article.id +'">Update</button>';
-                articleRow += '<input class="delete-article" type="checkbox"  name="articleDelete[]" value="{{$article->id}}"/>';  // patikrinti
+                articleRow += '<input class="delete-article" type="checkbox"  name="articleDelete[]"" value="'+ article.id +'"/>';  // patikrinti
                 articleRow += "</td>";
                 articleRow += "</tr>";
             $(".articles tbody").append(articleRow);
         });
     }
+
+    $(document).on('click', '#delete-selected', function() {
+    // $("#delete-selected").click(function() {
+        var checkedArticles = [];
+        $.each( $(".delete-article:checked"), function( key, article) {
+            checkedArticles[key] = article.value;
+        });
+        // console.log(checkedArticles);
+            $.ajax({
+                type: 'POST',
+                url: '{{route("article.destroySelected")}}',
+                data: { checkedArticles: checkedArticles },
+                success: function(data) {
+                        $(".alerts").toggleClass("d-none");
+                        for(var i=0; i<data.messages.length; i++) {
+                            $(".alerts").append("<div class='alert alert-"+data.errorsuccess[i] + "'><p>"+ data.messages[i] + "</p></div>")
+                            var id = data.success[i];
+                            if(data.errorsuccess[i] == "success") {
+                                $(".rowArticle"+id ).remove();
+
+                            }
+                        }
+
+                    }
+                });
+            })
+
+        $(".delete-article").click(function(){
+            var article_id = $(this).val();
+
+    })
+
 
  $(document).ready(function() {
     // $(".addArticleModal").click(function() {
@@ -243,7 +275,7 @@
                             articleRow += "<td>";
                             articleRow += '<button type="button" class="btn btn-dark show-article" data-article_id="'+ data.article_id +'">Show</button>';
                             articleRow += '<button type="button" class="btn btn-warning update-article" data-article_id="'+ data.article_id +'">Update</button>';
-                            articleRow += '<input class="delete-article" type="checkbox"  name="articleDelete[]" value="{{$article->id}}"/>';  // patikrinti
+                            articleRow += '<input class="delete-article" type="checkbox"  name="articleDelete[]"" value="'+ article.id +'"/>';  // patikrinti
                             articleRow += "</td>";
                             articleRow += "</tr>";
                         $(".articles tbody").append(articleRow);
@@ -360,36 +392,6 @@
             });
         }
     })
-    $("#delete-selected").click(function() {
-        var checkedArticles = [];
-        $.each( $(".delete-article:checked"), function( key, article) {
-            checkedArticles[key] = article.value;
-        });
-        console.log(checkedArticles);
-            $.ajax({
-                type: 'POST',
-                url: '{{route("article.destroySelected")}}',
-                data: { checkedArticles: checkedArticles },
-                success: function(data) {
-                        $(".alerts").toggleClass("d-none");
-                        for(var i=0; i<data.messages.length; i++) {
-                            $(".alerts").append("<div class='alert alert-"+data.errorsuccess[i] + "'><p>"+ data.messages[i] + "</p></div>")
-                            var id = data.success[i];
-                            if(data.errorsuccess[i] == "success") {
-                                $(".article"+id ).remove();
-
-                            }
-                        }
-
-                    }
-                });
-            })
-
-        $(".delete-article").click(function(){
-            var article_id = $(this).val();
-
-    })
-
 
     $(document).on('click', '#filterArticles', function() {
         var sortCol = $("#sortCol").val();

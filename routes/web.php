@@ -49,6 +49,11 @@ Route::prefix('types')->group(function () {
     Route::get('show/{type}', 'App\Http\Controllers\TypeController@show')->name('type.show')->middleware("auth");
     Route::post('storeAjax', 'App\Http\Controllers\TypeController@storeAjax')->name('type.storeAjax')->middleware("auth");
     Route::post('destroySelected', 'App\Http\Controllers\TypeController@destroySelected')->name('type.destroySelected')->middleware("auth");
+    Route::get('showAjax/{type}', 'App\Http\Controllers\TypeController@showAjax')->name('type.showAjax')->middleware("auth");
+    Route::post('updateAjax/{type}', 'App\Http\Controllers\TypeController@updateAjax')->name('type.updateAjax')->middleware("auth");
+    Route::get('searchAjax', 'App\Http\Controllers\TypeController@searchAjax') ->name('type.searchAjax')->middleware("auth");
+    Route::get('indexAjax', 'App\Http\Controllers\TypeController@indexAjax') ->name('type.indexAjax')->middleware("auth");
+    Route::get('filterAjax', 'App\Http\Controllers\TypeController@filterAjax') ->name('type.filterAjax')->middleware("auth");
 });
 
 Auth::routes();
